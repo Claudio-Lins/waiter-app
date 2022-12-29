@@ -47,19 +47,21 @@ export function Main() {
 
   // socket connection
   useEffect(() => {
-    const socket = socketIo('http://192.168.1.142:3333', {
+    const socket = socketIo('http://192.168.1.71:3333', {
       transports: ['websocket'],
     });
-    socket.on('orders@status', () => {
-      api.get('/orders').then((response) => {
-        setOrders(response.data);
-        response.data.map((order: OrderProps) => {
-          order.status === 'IN_PRODUCTION' &&
-            alert(`Pedido da mesa ${order.table} em produção`);
-          order.status === 'DONE' && alert(`Pedido da mesa ${order.table} pronto`)
-          ;
-        });
-      });
+    socket.on('orders@status', (table, status) => {
+      console.log(table, status);
+      alert(`Mesa ${table} ${status}`);
+      // api.get('/orders').then((response) => {
+      //   setOrders(response.data);
+      //   response.data.map((order: OrderProps) => {
+      //     order.status === 'IN_PRODUCTION' &&
+      //       alert(`Pedido da mesa ${order.table} em produção`);
+      //     order.status === 'DONE' && alert(`Pedido da mesa ${order.table} pronto`)
+      //     ;
+      //   });
+      // });
     }
     );
   }, []);
