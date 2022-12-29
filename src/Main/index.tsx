@@ -51,8 +51,10 @@ export function Main() {
       transports: ['websocket'],
     });
     socket.on('orders@status', (table, status) => {
-      console.log(table, status);
-      alert(`Mesa ${table} ${status}`);
+      const messageStatus = status === 'IN_PRODUCTION' ? 'em produção' : 'pronto';
+      alert(`Mesa ${table} ${messageStatus}`);
+     
+      
       // api.get('/orders').then((response) => {
       //   setOrders(response.data);
       //   response.data.map((order: OrderProps) => {
