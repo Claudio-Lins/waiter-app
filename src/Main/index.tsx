@@ -16,6 +16,7 @@ import { api } from '../utils/api';
 
 import { Category } from '../@types/Category';
 import { OrderProps } from '../@types/Order';
+import { StatusModal } from '../components/StatusModal';
 import {
   CategoriesContainer,
   Container,
@@ -33,6 +34,9 @@ export function Main() {
   const [orders, setOrders] = useState<OrderProps[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [isLoadingProducts, setIsLoadingProducts] = useState(false);
+  const [isStatusModalVisible, setIsStatusModalVisible] = useState(false);
+  const [table, setTable] = useState('');
+  const [statusMessage, setStatusMessage] = useState('');
 
   // axios resquest api
   useEffect(() => {
@@ -47,23 +51,17 @@ export function Main() {
 
   // socket connection
   useEffect(() => {
-    const socket = socketIo('http://192.168.1.71:3333', {
+    const socket = socketIo('http://192.168.1.142:3333', {
       transports: ['websocket'],
     });
     socket.on('orders@status', (table, status) => {
-      const messageStatus = status === 'IN_PRODUCTION' ? 'em produção' : 'pronto';
-      alert(`Mesa ${table} ${messageStatus}`);
-     
-      
-      // api.get('/orders').then((response) => {
-      //   setOrders(response.data);
-      //   response.data.map((order: OrderProps) => {
-      //     order.status === 'IN_PRODUCTION' &&
-      //       alert(`Pedido da mesa ${order.table} em produção`);
-      //     order.status === 'DONE' && alert(`Pedido da mesa ${order.table} pronto`)
-      //     ;
-      //   });
-      // });
+      const messageStatus = status === 'IN_PRODUCTION' ? 'Em produção' : 'Pronto';
+      setIsStatusModalVisible(true);
+      setTable(table);
+      setStatusMessage(messageStatus);
+      // setInterval(() => {
+      //   setIsStatusModalVisible(false);
+      // }, 9000);
     }
     );
   }, []);
@@ -141,6 +139,12 @@ export function Main() {
 
   return (
     <>
+      <StatusModal
+        visible={isStatusModalVisible}
+        table={table}
+        statusMessage={statusMessage}
+        onClose={() => {setIsStatusModalVisible(false);}}
+      ></StatusModal>
       <Container>
         <Header
           selectedTable={selectedTable}
